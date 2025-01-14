@@ -1,10 +1,13 @@
 const express = require("express");
 const app = express();
+
 const dotenv = require("dotenv");
-const port = 5000;
 dotenv.config();
-app.get("/", function (req, res) {
-  res.send("Hello World11111111121423423");
+const port = process.env.PORT;
+
+app.get("/", (req, res) => {
+  console.log("Server is starting... he1lo");
+  res.send("Hello word ");
 });
 
 console.log(port);
