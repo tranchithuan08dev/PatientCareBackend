@@ -3,14 +3,10 @@ const app = express();
 
 const dotenv = require("dotenv");
 dotenv.config();
+app.use(express.json());
 const port = process.env.PORT;
 
-app.get("/", (req, res) => {
-  console.log("Server is starting... he1lo");
-  res.send("Hello word ");
-});
-
-console.log(port);
+app.use(express.json);
 
 app.listen(port, () => {
   console.log(`Server is running on ${port}`);
