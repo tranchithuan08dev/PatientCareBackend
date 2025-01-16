@@ -19,7 +19,7 @@ const baseModel = {
         values.push(skip);
       }
 
-      return (await pool.query(query, values)).row;
+      return (await pool.query(query, values)).rows;
     } catch (error) {
       console.error("Error executing pagination query:", error);
       throw new Error(`Pagination operation failed: ${error.message}`);
