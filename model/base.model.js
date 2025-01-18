@@ -25,6 +25,21 @@ const baseModel = {
       throw new Error(`Pagination operation failed: ${error.message}`);
     }
   },
+  findById: async (tableName, columnName, value) => {
+    try {
+      const query = `SELECT * FROM "${tableName}" WHERE "${columnName}" = $1`;
+      console.log(query);
+
+      const result = await pool.query(query, [value]);
+      if (result.rows.length === 0) {
+        return null; // No record found
+      }
+      return result.rows[0];
+    } catch (error) {
+      console.error("Error executing findByPhone:", error);
+      throw new Error(`Find by phone operation failed: ${error.message}`);
+    }
+  },
 };
 
 module.exports = baseModel;
