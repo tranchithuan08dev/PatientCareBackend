@@ -36,7 +36,7 @@ const baseModel = {
       }
       return result.rows[0];
     } catch (error) {
-      console.error("Error executing findByPhone:", error);
+      console.error("Error executing findById:", error);
       throw new Error(`Find by phone operation failed: ${error.message}`);
     }
   },
