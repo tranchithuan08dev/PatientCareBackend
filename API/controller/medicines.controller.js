@@ -28,6 +28,8 @@ const medicinesController = {
     let statusCode = 500;
     try {
       const { id } = req.query;
+      console.log("id", id);
+
       if (!id) {
         statusCode = 400;
         throw new Error("Invalid ID");
