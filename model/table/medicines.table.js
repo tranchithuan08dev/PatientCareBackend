@@ -1,7 +1,7 @@
 const medicinesTable = {
   name: "medicines",
   colums: {
-    medicineId: "medicineId",
+    medicineId: "medicinesid",
     nameMedicine: "nameMedicine",
     description: "description",
     priceIn: "priceIn",
