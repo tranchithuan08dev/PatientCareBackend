@@ -30,7 +30,7 @@ const medicinesController = {
       const { id } = req.query;
       console.log("id", id);
 
-      if (!id) {
+      if (!id && !isValidId(id)) {
         statusCode = 400;
         throw new Error("Invalid ID");
       }
