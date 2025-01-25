@@ -4,7 +4,88 @@ const handleResponse = require("../../helper/handleRespone.helper");
 const handleError = require("../../helper/handleError.helper");
 const isValidId = require("../../validates/reqIdParam.validate");
 const handleRespone = require("../../helper/handleRespone.helper");
+const { getColsVals } = require("../../helper/getColsVals.helper");
 const medicinesController = {
+  createMedicine: async (req, res) => {
+    try {
+      const {
+        medicinesName,
+        dosageInstructions,
+        description,
+        priceIn,
+        priceOut,
+        quantity,
+      } = req.body;
+      console.log(req.body);
+
+      if (!medicinesName || !priceIn || !priceOut || !quantity) {
+        return res
+          .status(400)
+          .json({ message: "Required fields are missing." });
+      }
+
+      const newMedicine = await baseModel.create(
+        medicinesTable.name,
+        Object.keys(medicinesTable.columns).filter(
+          (key) => key !== "medicineId"
+        ),
+        [
+          medicinesName,
+          dosageInstructions,
+          description,
+          priceIn,
+          priceOut,
+          quantity,
+        ]
+      );
+      return handleResponse(res, 201, { medicines: newMedicine });
+    } catch (error) {
+      console.error("Error creating medicine:", error);
+      return handleError(res, statusCode, error);
+    }
+  },
+
+  updateMedicine: async (req, res) => {
+    try {
+      const { id } = req.query;
+      const updates = req.body;
+
+      if (!id || Object.keys(updates).length === 0) {
+        return res
+          .status(400)
+          .json({ message: "Medicine ID and updates are required." });
+      }
+
+      const validColumns = Object.keys(updates).filter(
+        (key) => medicinesTable.columns[key]
+      );
+      const validValues = validColumns.map((key) => updates[key]);
+      const dbColumns = validColumns.map((key) => medicinesTable.columns[key]);
+
+      if (dbColumns.length === 0) {
+        return res.status(400).json({ message: "No valid columns to update." });
+      }
+
+      // Call your update method
+      const updatedMedicine = await baseModel.update(
+        medicinesTable.name, // Table name
+        medicinesTable.columns.medicineId, // ID column
+        id, // ID value
+        dbColumns, // Columns to update
+        validValues // Corresponding values
+      );
+
+      if (!updatedMedicine) {
+        return res.status(404).json({ message: "Medicine not found." });
+      }
+
+      res.status(200).json(updatedMedicine);
+    } catch (error) {
+      console.error("Error updating medicine:", error);
+      res.status(500).json({ message: "Failed to update medicine." });
+    }
+  },
+
   getAllMedicines: async (req, res) => {
     let statusCode;
     try {
