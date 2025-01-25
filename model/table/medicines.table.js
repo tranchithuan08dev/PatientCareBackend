@@ -1,11 +1,12 @@
 const medicinesTable = {
   name: "medicines",
-  colums: {
+  columns: {
     medicineId: "medicinesid",
-    nameMedicine: "nameMedicine",
+    medicinesName: "medicinesname",
+    dosageInstructions: "dosageinstructions",
     description: "description",
-    priceIn: "priceIn",
-    priceOut: "priceOut",
+    priceIn: "pricein",
+    priceOut: "priceout",
     quantity: "quantity",
   },
 };
