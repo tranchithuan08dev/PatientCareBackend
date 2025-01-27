@@ -1,21 +1,26 @@
 const pool = require("../config/connection");
-const keyUtils = require("../helper/keyUtils.helper");
+
 pool.connect();
 
 const baseModel = {
-  find: async (tableName, columns = ["*"], { limit, skip } = {}) => {
+  find: async (
+    tableName,
+    columns = ["*"],
+    { limit, skip } = {},
+    orderBy = "id"
+  ) => {
     try {
       const setColumns = columns.join(", ");
       let query = `SELECT ${setColumns} FROM "${tableName}"`;
 
       const values = [];
 
-      if (limit && skip !== undefined) {
-        const clause = `
-        LIMIT $${values.length + 1}
-        OFFSET $${values.length + 2}`;
+      if (orderBy) {
+        query += ` ORDER BY ${orderBy} DESC`;
+      }
 
-        query += clause;
+      if (limit && skip !== undefined) {
+        query += ` LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
         values.push(limit);
         values.push(skip);
       }
@@ -26,6 +31,31 @@ const baseModel = {
       throw new Error(`Pagination operation failed: ${error.message}`);
     }
   },
+
+  getAllMedicines: async (req, res) => {
+    try {
+      const limit = Math.abs(parseInt(req.query.perpage)) || 10; // Default to 10 per page
+      const page = Math.abs(parseInt(req.query.page) || 1); // Default to page 1
+      const offset = (page - 1) * limit;
+
+      const medicines = await baseModel.find(
+        medicinesTable.name,
+        undefined,
+        { limit, skip: offset },
+        medicinesTable.columns.medicineId // Assumes medicineId exists
+      );
+
+      if (!medicines || medicines.length === 0) {
+        return handleResponse(res, 200, { medicines: [] });
+      }
+
+      return handleResponse(res, 200, { medicines });
+    } catch (error) {
+      console.error("Error fetching medicines:", error);
+      return handleError(res, 500, error);
+    }
+  },
+
   findById: async (tableName, columnName, value) => {
     try {
       const query = `SELECT * FROM "${tableName}" WHERE "${columnName}" = $1`;
