@@ -4,7 +4,6 @@ const handleResponse = require("../../helper/handleRespone.helper");
 const handleError = require("../../helper/handleError.helper");
 const isValidId = require("../../validates/reqIdParam.validate");
 const handleRespone = require("../../helper/handleRespone.helper");
-const { getColsVals } = require("../../helper/getColsVals.helper");
 const medicinesController = {
   createMedicine: async (req, res) => {
     try {
@@ -91,9 +90,14 @@ const medicinesController = {
     try {
       const limit = Math.abs(parseInt(req.query.perpage)) || null;
       const offset = (Math.abs(parseInt(req.query.page) || 1) - 1) * limit;
-      const medicines = await baseModel.find(medicinesTable.name, undefined, {
-        limit,
-      });
+      const medicines = await baseModel.find(
+        medicinesTable.name,
+        undefined,
+        {
+          limit,
+        },
+        medicinesTable.columns.medicineId
+      );
       if (!medicines || medicines.length === 0) {
         statusCode = 400;
         throw new Error("No records of medicines");
@@ -115,10 +119,9 @@ const medicinesController = {
         statusCode = 400;
         throw new Error("Invalid ID");
       }
-
       const medicinesDetail = await baseModel.findById(
         medicinesTable.name,
-        medicinesTable.colums.medicineId,
+        medicinesTable.columns.medicineId,
         id
       );
 
