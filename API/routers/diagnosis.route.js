@@ -1,5 +1,5 @@
 const diagnosisController = require("../../API/controller/diagnosis.controller");
 const route = require("express").Router();
 
-route.get("/create", diagnosisController.create);
+route.post("/create", diagnosisController.create);
 module.exports = route;
