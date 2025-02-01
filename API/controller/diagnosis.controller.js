@@ -20,10 +20,10 @@ const diagnosisController = {
       const queryInsertDiagnosis = `
         INSERT INTO diagnosis (
           userid, pulserate, respirationrate, bloodpressure,
-          height, weight, medicalhistory, clinicalsigns,
+          height, weight, temperature, medicalhistory, clinicalsigns,
           diagnosis, resolution, nextappointment
         ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12
         ) RETURNING diagnosisId;
       `;
       const {
@@ -32,6 +32,7 @@ const diagnosisController = {
         bloodpressure,
         height,
         weight,
+        temperature,
         medicalhistory,
         clinicalsigns,
         diagnosis,
@@ -46,6 +47,7 @@ const diagnosisController = {
         bloodpressure,
         height,
         weight,
+        temperature,
         medicalhistory,
         clinicalsigns,
         diagnosis,
