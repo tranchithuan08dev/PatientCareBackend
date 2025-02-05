@@ -43,6 +43,26 @@ const userController = {
       });
     }
   },
+  getAll: async (req, res) => {
+    let statusCode;
+    try {
+      const limit = Math.abs(parseInt(req.query.perpage)) || null;
+      const offset = (Math.abs(parseInt(req.query.page) || 1) - 1) * limit;
+      const user = await baseModel.find(
+        userTable.name,
+        undefined,
+        { limit },
+        userTable.columns.userId
+      );
+      if (!user || user.length === 0) {
+        statusCode = 400;
+        throw new Error("No records of medicines");
+      }
+      return handleResponse(res, 200, { user: user });
+    } catch (error) {
+      return handleError(res, statusCode, error);
+    }
+  },
 };
 
 module.exports = userController;
