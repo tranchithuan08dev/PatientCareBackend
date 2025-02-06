@@ -93,6 +93,49 @@ const userController = {
       return handleError(res, statusCode, error);
     }
   },
+
+  update: async (req, res) => {
+    try {
+      const { id } = req.query;
+      console.log("id", id);
+
+      const updates = req.body;
+
+      if (!id || Object.keys(updates).length === 0) {
+        return res
+          .status(400)
+          .json({ message: "user ID and updates are required." });
+      }
+
+      const validColumns = Object.keys(updates).filter(
+        (key) => userTable.columns[key]
+      );
+      const validValues = validColumns.map((key) => updates[key]);
+      const dbColumns = validColumns.map((key) => userTable.columns[key]);
+
+      if (dbColumns.length === 0) {
+        return res.status(400).json({ message: "No valid columns to update." });
+      }
+
+      // Call your update method
+      const updatedUser = await baseModel.update(
+        userTable.name, // Table name
+        userTable.columns.userId, // ID column
+        id, // ID value
+        dbColumns, // Columns to update
+        validValues // Corresponding values
+      );
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      res.status(200).json(updatedUser);
+    } catch (error) {
+      console.error("Error updating medicine:", error);
+      res.status(500).json({ message: "Failed to update medicine." });
+    }
+  },
 };
 
 module.exports = userController;
