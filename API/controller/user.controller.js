@@ -63,6 +63,36 @@ const userController = {
       return handleError(res, statusCode, error);
     }
   },
+  getDetail: async (req, res) => {
+    let statusCode = 500;
+    try {
+      const { id } = req.query;
+      console.log("id", id);
+
+      if (!id && !isValidId(id)) {
+        statusCode = 400;
+        throw new Error("Invalid ID");
+      }
+      const userDetail = await baseModel.findById(
+        userTable.name,
+        userTable.columns.userId,
+        id
+      );
+
+      console.log("userDetail", userDetail);
+
+      if (!userDetail) {
+        statusCode = 404;
+        throw new Error("Medicine details not found");
+      }
+
+      return handleResponse(res, 200, {
+        data: userDetail,
+      });
+    } catch (error) {
+      return handleError(res, statusCode, error);
+    }
+  },
 };
 
 module.exports = userController;
