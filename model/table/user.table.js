@@ -8,6 +8,7 @@ const userTable = {
     phoneNumber: "phonenumber",
     address: "address",
     role: "role",
+    createat: "createat",
   },
 };
 
