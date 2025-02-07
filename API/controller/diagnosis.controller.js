@@ -141,6 +141,56 @@ const diagnosisController = {
       client.release();
     }
   },
+
+  getDetail: async (req, res) => {
+    const client = await pool.connect();
+    try {
+      const { id } = req.query; // Get the user ID from the request body
+      console.log("id", id);
+
+      if (!id) {
+        return res.status(400).json({ message: "Invalid ID" });
+      }
+
+      // Query to fetch diagnosis details for the user
+      const diagnosisQuery = `
+        SELECT 
+        diagnosisid,
+          pulserate,
+          respirationrate,
+          temperature,
+          bloodpressure,
+          height,
+          weight,
+          medicalhistory,
+          clinicalsigns,
+          diagnosis,
+          resolution,
+          nextappointment
+        FROM diagnosis
+        WHERE userid = $1
+      `;
+
+      const diagnosisResult = await client.query(diagnosisQuery, [id]);
+      console.log(diagnosisResult.rows);
+
+      if (diagnosisResult.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No diagnosis details found for this user" });
+      }
+
+      // Respond with diagnosis details
+      res.status(200).json({
+        diagnosis: diagnosisResult.rows,
+      });
+    } catch (error) {
+      console.error("Error fetching diagnosis details:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
+    } finally {
+      client.release();
+    }
+  },
 };
 
 module.exports = diagnosisController;
