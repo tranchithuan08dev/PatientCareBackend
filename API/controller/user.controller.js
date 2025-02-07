@@ -5,8 +5,15 @@ const handleError = require("../../helper/handleError.helper");
 const userController = {
   create: async (req, res) => {
     try {
-      const { fullName, gender, dateOfBirth, phoneNumber, address, role } =
-        req.body;
+      const {
+        fullName,
+        gender,
+        dateOfBirth,
+        phoneNumber,
+        address,
+        role,
+        createat,
+      } = req.body;
 
       // Validate required fields
       if (!fullName || !gender || !dateOfBirth || !phoneNumber) {
@@ -29,7 +36,15 @@ const userController = {
       const newUser = await baseModel.create(
         userTable.name,
         Object.keys(userTable.columns).filter((key) => key !== "userId"),
-        [fullName, gender, dateOfBirth, phoneNumber, address, userRole]
+        [
+          fullName,
+          gender,
+          dateOfBirth,
+          phoneNumber,
+          address,
+          userRole,
+          createat,
+        ]
       );
 
       // Respond with the created user
