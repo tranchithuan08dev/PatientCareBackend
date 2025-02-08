@@ -182,7 +182,52 @@ const diagnosisController = {
 
       // Respond with diagnosis details
       res.status(200).json({
-        diagnosis: diagnosisResult.rows,
+        diagnosis: diagnosisResult.rows[0],
+      });
+    } catch (error) {
+      console.error("Error fetching diagnosis details:", error.message);
+      res.status(500).json({ message: "Internal Server Error" });
+    } finally {
+      client.release();
+    }
+  },
+
+  getDetailMedicine: async (req, res) => {
+    const client = await pool.connect();
+    try {
+      const { id } = req.query;
+      if (!id) {
+        return res.status(400).json({ message: "Invalid ID" });
+      }
+      const medicineQuery = `SELECT 
+      d.diagnosisdetailid,
+    d.dosageunit,
+    d.morningdosage,
+    d.afternoondosage,
+    d.eveningdosage,
+    d.nightdosage,
+    d.days,
+    d.quantity,
+    d.usageinstructions,
+    d.notes,
+    me.medicinesname
+FROM public.diagnosisdetail AS d
+JOIN public.medicines AS me
+ON d.medicineid = me.medicinesid
+JOIN public.diagnosis AS di
+ON d.diagnosisid = di.diagnosisid
+WHERE di.userid = $1;
+`;
+      const medicineResult = await client.query(medicineQuery, [id]);
+      console.log(medicineResult.rows);
+
+      if (medicineResult.rows.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No medicine details found for this user" });
+      }
+      res.status(200).json({
+        medicine: medicineResult.rows,
       });
     } catch (error) {
       console.error("Error fetching diagnosis details:", error.message);
