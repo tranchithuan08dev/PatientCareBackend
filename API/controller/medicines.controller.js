@@ -73,6 +73,7 @@ const medicinesController = {
         dbColumns, // Columns to update
         validValues // Corresponding values
       );
+      console.log("updatedMedicine", updatedMedicine);
 
       if (!updatedMedicine) {
         return res.status(404).json({ message: "Medicine not found." });
