@@ -4,7 +4,7 @@ const diagnosisController = {
   create: async (req, res) => {
     const client = await pool.connect();
     try {
-      const { medicinesDetails, diagnois } = req.body;
+      const { medicinesDetails, diagnois, payment } = req.body;
 
       // Retrieve the latest user ID
       const queryUser = "SELECT userid FROM users ORDER BY userid DESC LIMIT 1";
@@ -126,6 +126,18 @@ const diagnosisController = {
         await client.query(updateMedicineQuery, [quantity, medicineId]);
       }
 
+      const { paymentdate, amount } = payment;
+      const queryInsertPayment = `
+      INSERT INTO Payment(
+        diagnosisid, paymentdate, amount
+      ) VALUES ( $1, $2, $3);
+    `;
+
+      await client.query(queryInsertPayment, [
+        diagnosisId,
+        paymentdate,
+        amount,
+      ]);
       // Commit the transaction
       await client.query("COMMIT");
 
